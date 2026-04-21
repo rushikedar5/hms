@@ -36,7 +36,7 @@ public class AuthService {
             user.setPassword(hashedPassword);
             user.setRole(role);
 
-            User savedUser = userRepository.save(user);
+            userRepository.save(user);
     }
 
     public AuthResponseDto signIn(SignInDto dto) {
