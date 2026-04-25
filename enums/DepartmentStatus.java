@@ -1,6 +1,6 @@
 package com.hospital.hms.enums;
 
-public enum Status {
+public enum DepartmentStatus {
     ACTIVE,
     INACTIVE
 }

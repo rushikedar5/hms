@@ -1,6 +1,6 @@
 package com.hospital.hms.model;
 
-import com.hospital.hms.enums.Status;
+import com.hospital.hms.enums.DepartmentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,7 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name = "departments")
+@Table(name = "departments", uniqueConstraints = {
+        @UniqueConstraint(name = "UniqueName", columnNames = {"name"})
+})
 @Entity
 @Data
 public class Department {
@@ -19,7 +21,7 @@ public class Department {
     private String name;
 
     @Enumerated(value = EnumType.STRING)
-    private Status status;
+    private DepartmentStatus status;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
