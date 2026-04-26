@@ -39,7 +39,7 @@ public class AuthService {
             userRepository.save(user);
     }
 
-    public AuthResponseDto signIn(SignInDto dto) {
+    public AuthResponseDto signIn(SignInDto dto, Role role) {
 
         User user = (userRepository.findByEmail(dto.getEmail())
                         .orElseThrow(() -> new UsernameNotFoundException("User not found!!")));
@@ -50,7 +50,7 @@ public class AuthService {
             throw new IllegalArgumentException("Wrong Password!!");
         }
 
-        String token = jwtUtil.generateToken(dto.getEmail());
+        String token = jwtUtil.generateToken(dto.getEmail(), user.getRole());
 
         return new AuthResponseDto(token);
     }

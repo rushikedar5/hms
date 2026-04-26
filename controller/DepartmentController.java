@@ -7,6 +7,7 @@ import com.hospital.hms.service.DepartmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     @PostMapping("/departments")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> createDepartments(@RequestBody @Valid DepartmentDto dto) {
         Department department = departmentService.createDepartment(dto);
 
