@@ -28,7 +28,7 @@ public class DoctorSchedule {
 
     private LocalTime endTime;
 
-    private boolean isAvailable;
+    private Boolean isAvailable;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

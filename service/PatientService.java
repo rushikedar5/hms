@@ -8,6 +8,7 @@ import com.hospital.hms.repository.PatientProfileRepository;
 import com.hospital.hms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,7 +25,7 @@ public class PatientService {
                 .getName();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found!"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
 
         if(patientProfileRepository.findByUser(user).isPresent()) {
             throw new IllegalArgumentException("Profile already exists!");
