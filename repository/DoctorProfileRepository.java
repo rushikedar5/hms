@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface DoctorProfileRepository extends JpaRepository<DoctorProfile, UUID> {
     Optional<DoctorProfile> findByUser(User user);
+
 }
