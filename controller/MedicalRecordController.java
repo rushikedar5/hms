@@ -2,16 +2,16 @@ package com.hospital.hms.controller;
 
 import com.hospital.hms.dto.ApiResponse;
 import com.hospital.hms.dto.MedicalRecordDto;
+import com.hospital.hms.dto.MedicalRecordResponseDto;
 import com.hospital.hms.model.MedicalRecord;
 import com.hospital.hms.service.MedicalRecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class MedicalRecordController {
     @PostMapping("/medical-record")
     @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse> createMedicalRecord(@RequestBody @Valid MedicalRecordDto dto) {
-        MedicalRecord medicalRecord = medicalRecordService.addMedicalRecord(dto);
+        MedicalRecordResponseDto medicalRecord = medicalRecordService.addMedicalRecord(dto);
 
         return ResponseEntity
                 .status(201)
@@ -32,4 +32,18 @@ public class MedicalRecordController {
                         .message("MedicalRecord created successfully!!")
                         .build());
     }
+
+    @GetMapping("/patients/medical-records")
+    public ResponseEntity<ApiResponse> getMedicalRecord() {
+        List<MedicalRecordResponseDto> medicalRecord = medicalRecordService.getMedicalRecord();
+
+        return ResponseEntity
+                .status(201)
+                .body(ApiResponse.builder()
+                        .data(medicalRecord)
+                        .message("MedicalRecord fetched successfully!!")
+                        .build());
+    }
+
+
 }
