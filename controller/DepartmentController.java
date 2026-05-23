@@ -33,6 +33,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/departments")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> getAllDepartment() {
         List<Department> departments = departmentService.getAllDepartments();
 

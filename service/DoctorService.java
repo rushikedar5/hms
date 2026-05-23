@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DoctorService {
@@ -51,19 +53,29 @@ public class DoctorService {
         doctorProfile.setSpecialization(dto.getSpecialization());
         doctorProfile.setLicenseNo(dto.getLicenseNo());
 
-        DoctorProfile saved = doctorProfileRepository.save(doctorProfile);
+        return mapToResponse(doctorProfileRepository.save(doctorProfile));
 
+    }
+
+    public List<DoctorProfileResponseDto> getALlDoctors() {
+        return doctorProfileRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public DoctorProfileResponseDto mapToResponse(DoctorProfile doctorProfile) {
         DoctorProfileResponseDto response = new DoctorProfileResponseDto();
-        response.setId(saved.getId());
-        response.setEmail(saved.getUser().getEmail());
-        response.setName(saved.getName());
-        response.setDepartment(department.getName());
-        response.setDepartmentId(department.getId());
-        response.setPhone(saved.getPhone());
-        response.setDegree(saved.getDegree());
-        response.setSpecialization(saved.getSpecialization());
-        response.setLicenseNo(saved.getLicenseNo());
-        response.setCreatedAt(saved.getCreatedAt());
+        response.setId(doctorProfile.getId());
+        response.setEmail(doctorProfile.getUser().getEmail());
+        response.setName(doctorProfile.getName());
+        response.setDepartment(doctorProfile.getName());
+        response.setDepartmentId(doctorProfile.getId());
+        response.setPhone(doctorProfile.getPhone());
+        response.setDegree(doctorProfile.getDegree());
+        response.setSpecialization(doctorProfile.getSpecialization());
+        response.setLicenseNo(doctorProfile.getLicenseNo());
+        response.setCreatedAt(doctorProfile.getCreatedAt());
 
         return response;
     }

@@ -8,10 +8,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +29,19 @@ public class PatientController {
                 .body(ApiResponse.builder()
                         .data(patientProfile)
                         .message("Patient registered successfully!!")
+                        .build());
+    }
+
+    @GetMapping("/admin/patients")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse> getAllPatients() {
+        List<PatientProfileResponseDto> patientProfile = patientService.getAllPatients();
+
+        return ResponseEntity
+                .status(200)
+                .body(ApiResponse.builder()
+                        .data(patientProfile)
+                        .message("Patients fetched successfully!!")
                         .build());
     }
 }

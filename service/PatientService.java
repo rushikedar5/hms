@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PatientService {
@@ -39,18 +41,29 @@ public class PatientService {
         patientProfile.setBloodGroup(dto.getBloodGroup());
         patientProfile.setDateOfBirth(dto.getDateOfBirth());
 
-        patientProfileRepository.save(patientProfile);
+        return mapToResponse(patientProfileRepository.save(patientProfile));
 
+    }
+
+    public List<PatientProfileResponseDto> getAllPatients() {
+        return patientProfileRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public PatientProfileResponseDto mapToResponse(PatientProfile patientProfile) {
         PatientProfileResponseDto response = new PatientProfileResponseDto();
-        response.setId(user.getId());
-        response.setEmail(email);
+        response.setId(patientProfile.getId());
         response.setName(patientProfile.getName());
-        response.setPhone(patientProfile.getPhone());
+        response.setEmail(patientProfile.getUser().getEmail());
         response.setAddress(patientProfile.getAddress());
-        response.setBloodGroup(patientProfile.getBloodGroup());
+        response.setPhone(patientProfile.getPhone());
         response.setDateOfBirth(patientProfile.getDateOfBirth());
+        response.setBloodGroup(patientProfile.getBloodGroup());
         response.setCreatedAt(patientProfile.getCreatedAt());
 
         return response;
+
     }
 }
