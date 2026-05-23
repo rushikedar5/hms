@@ -2,16 +2,17 @@ package com.hospital.hms.controller;
 
 import com.hospital.hms.dto.ApiResponse;
 import com.hospital.hms.dto.OpdQueueDto;
+import com.hospital.hms.dto.UpdateQueueStatusDto;
 import com.hospital.hms.model.OpdQueue;
 import com.hospital.hms.service.OpdQueueService;
+import com.hospital.hms.service.UpdateQueueStatusService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OpdQueueController {
 
     private final OpdQueueService opdQueueService;
+    private final UpdateQueueStatusService updateQueueStatusService;
 
     @PostMapping("/queue")
     @PreAuthorize("hasRole('RECEPTIONIST')")
@@ -30,6 +32,19 @@ public class OpdQueueController {
                 .body(ApiResponse.builder()
                         .data(opdQueue)
                         .message("Added to queue successfully!!")
+                        .build());
+    }
+
+    @PutMapping("/queue/{id}/status")
+    @PreAuthorize("hasRole('RECEPTIONIST')")
+    public ResponseEntity<ApiResponse> updateStatus(@PathVariable UUID id, @RequestBody @Valid UpdateQueueStatusDto dto){
+        OpdQueue opdQueue = updateQueueStatusService.updateStatus(id, dto);
+
+        return ResponseEntity
+                .status(201)
+                .body(ApiResponse.builder()
+                        .data(opdQueue)
+                        .message("QueueStatus updated successfully!!")
                         .build());
     }
 }
