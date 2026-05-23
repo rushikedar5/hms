@@ -5,6 +5,7 @@ import com.hospital.hms.model.DoctorProfile;
 import com.hospital.hms.model.OpdQueue;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,4 +14,6 @@ public interface OpdQueueRepository extends JpaRepository<OpdQueue, UUID> {
     Optional<OpdQueue> findByAppointment(Appointment appointment);
 
     String countByDoctorProfile(DoctorProfile doctorProfile);
+
+    List<OpdQueue> findByDoctorProfile(DoctorProfile doctorProfile);
 }

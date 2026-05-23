@@ -1,30 +1,28 @@
 package com.hospital.hms.service;
 
 import com.hospital.hms.dto.OpdQueueDto;
+import com.hospital.hms.dto.OpdQueueResponseDto;
 import com.hospital.hms.enums.QueueStatus;
-import com.hospital.hms.model.Appointment;
-import com.hospital.hms.model.DoctorProfile;
-import com.hospital.hms.model.OpdQueue;
-import com.hospital.hms.model.PatientProfile;
-import com.hospital.hms.repository.AppointmentRepository;
-import com.hospital.hms.repository.DoctorProfileRepository;
-import com.hospital.hms.repository.OpdQueueRepository;
-import com.hospital.hms.repository.PatientProfileRepository;
+import com.hospital.hms.model.*;
+import com.hospital.hms.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class OpdQueueService {
 
+    private final UserRepository userRepository;
     private final PatientProfileRepository patientProfileRepository;
     private final DoctorProfileRepository doctorProfileRepository;
     private final AppointmentRepository appointmentRepository;
     private final OpdQueueRepository opdQueueRepository;
 
-    public OpdQueue addToQueue(OpdQueueDto dto) {
+    public OpdQueueResponseDto addToQueue(OpdQueueDto dto) {
         PatientProfile patientProfile = patientProfileRepository.findById(dto.getPatientId())
                 .orElseThrow(() -> new IllegalArgumentException("Patient not found!!"));
 
@@ -48,6 +46,38 @@ public class OpdQueueService {
         opdQueue.setQueueStatus(QueueStatus.WAITING);
         opdQueue.setTokenNo(tokenNo);
 
-        return opdQueueRepository.save(opdQueue);
+        return mapToResponse(opdQueueRepository.save(opdQueue));
+    }
+
+    public List<OpdQueueResponseDto> getQueue() {
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found!!"));
+
+        DoctorProfile doctorProfile = doctorProfileRepository.findByUser(user)
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found!!"));
+
+        return opdQueueRepository.findByDoctorProfile(doctorProfile)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private OpdQueueResponseDto mapToResponse(OpdQueue opdQueue) {
+        OpdQueueResponseDto response = new OpdQueueResponseDto();
+        response.setId(opdQueue.getId());
+        response.setDoctorName(opdQueue.getDoctorProfile().getName());
+        response.setPatientName(opdQueue.getPatientProfile().getName());
+        response.setQueueStatus(opdQueue.getQueueStatus());
+        response.setTokenNo(opdQueue.getTokenNo());
+        response.setAppointmentDate(opdQueue.getAppointment().getAppointmentDate());
+        response.setCreatedAt(opdQueue.getCreatedAt());
+        response.setUpdatedAt(opdQueue.getUpdatedAt());
+
+        return response;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,12 +39,24 @@ public class MedicalRecordController {
         List<MedicalRecordResponseDto> medicalRecord = medicalRecordService.getMedicalRecord();
 
         return ResponseEntity
-                .status(201)
+                .status(200)
                 .body(ApiResponse.builder()
                         .data(medicalRecord)
                         .message("MedicalRecord fetched successfully!!")
                         .build());
     }
 
+    @GetMapping("/doctors/patients/{id}/records")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<ApiResponse> getMedicalRecordById(@PathVariable UUID id) {
+        List<MedicalRecordResponseDto> medicalRecord = medicalRecordService.getMedicalRecordById(id);
+
+        return ResponseEntity
+                .status(200)
+                .body(ApiResponse.builder()
+                        .data(medicalRecord)
+                        .message("MedicalRecord fetched successfully!!")
+                        .build());
+    }
 
 }

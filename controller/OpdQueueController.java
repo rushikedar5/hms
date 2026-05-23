@@ -2,6 +2,7 @@ package com.hospital.hms.controller;
 
 import com.hospital.hms.dto.ApiResponse;
 import com.hospital.hms.dto.OpdQueueDto;
+import com.hospital.hms.dto.OpdQueueResponseDto;
 import com.hospital.hms.dto.UpdateQueueStatusDto;
 import com.hospital.hms.model.OpdQueue;
 import com.hospital.hms.service.OpdQueueService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,7 +27,7 @@ public class OpdQueueController {
     @PostMapping("/queue")
     @PreAuthorize("hasRole('RECEPTIONIST')")
     public ResponseEntity<ApiResponse> createAddToQueue(@RequestBody @Valid OpdQueueDto dto) {
-        OpdQueue opdQueue = opdQueueService.addToQueue(dto);
+        OpdQueueResponseDto opdQueue = opdQueueService.addToQueue(dto);
 
         return ResponseEntity
                 .status(201)
@@ -45,6 +47,19 @@ public class OpdQueueController {
                 .body(ApiResponse.builder()
                         .data(opdQueue)
                         .message("QueueStatus updated successfully!!")
+                        .build());
+    }
+
+    @GetMapping("doctors/queue")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<ApiResponse> getQueue() {
+        List<OpdQueueResponseDto> opdQueue = opdQueueService.getQueue();
+
+        return ResponseEntity
+                .status(200)
+                .body(ApiResponse.builder()
+                        .data(opdQueue)
+                        .message("Queues fetched successfully!!")
                         .build());
     }
 }

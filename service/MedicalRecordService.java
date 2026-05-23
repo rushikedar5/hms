@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.ContentHandler;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +66,17 @@ public class MedicalRecordService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found!!"));
 
         PatientProfile patientProfile = patientProfileRepository.findByUser(user)
+                .orElseThrow(() -> new IllegalArgumentException("Patient not found!!"));
+
+        return medicalRecordRepository.findByPatientProfile(patientProfile)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public List<MedicalRecordResponseDto> getMedicalRecordById(UUID id) {
+
+        PatientProfile patientProfile = patientProfileRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Patient not found!!"));
 
         return medicalRecordRepository.findByPatientProfile(patientProfile)
