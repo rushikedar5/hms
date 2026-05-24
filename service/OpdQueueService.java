@@ -32,12 +32,16 @@ public class OpdQueueService {
         Appointment appointment = appointmentRepository.findById(dto.getAppointmentId())
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found!!"));
 
-        if(opdQueueRepository.findByAppointment(appointment).isPresent()){
-            throw new IllegalArgumentException("Patient already in queue for this appointment!!");
-        }
+        opdQueueRepository.findByAppointment(appointment).ifPresent(q -> {
+            if(q.getQueueStatus() != QueueStatus.CANCELLED &&
+                    q.getQueueStatus() != QueueStatus.COMPLETED) {
+                throw new IllegalArgumentException("Patient already in queue for this appointment!!");
+            }
+        });
 
         LocalDate today = LocalDate.now();
-        String tokenNo = opdQueueRepository.countByDoctorProfile(doctorProfile) + 1;
+        int count = opdQueueRepository.countByCreatedAtDate(today);
+        String tokenNo = String.format("%02d", count + 1);
 
         OpdQueue opdQueue = new OpdQueue();
         opdQueue.setAppointment(appointment);
@@ -67,17 +71,44 @@ public class OpdQueueService {
                 .toList();
     }
 
+    public List<OpdQueueResponseDto> getAllQueue() {
+        return opdQueueRepository.findAllByOrderByTokenNoAsc()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public OpdQueueResponseDto getPatientQueue() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        PatientProfile patient = patientProfileRepository.findByUser(user)
+                .orElseThrow(() -> new IllegalArgumentException("Profile not found"));
+
+        return opdQueueRepository
+                .findFirstByPatientProfileAndQueueStatusIn(
+                        patient,
+                        List.of(QueueStatus.WAITING, QueueStatus.IN_PROGRESS)
+                )
+                .map(this::mapToResponse)
+                .orElse(null);
+    }
+
     private OpdQueueResponseDto mapToResponse(OpdQueue opdQueue) {
         OpdQueueResponseDto response = new OpdQueueResponseDto();
         response.setId(opdQueue.getId());
         response.setDoctorName(opdQueue.getDoctorProfile().getName());
         response.setPatientName(opdQueue.getPatientProfile().getName());
+        response.setPatientId(opdQueue.getPatientProfile().getId());
         response.setQueueStatus(opdQueue.getQueueStatus());
         response.setTokenNo(opdQueue.getTokenNo());
         response.setAppointmentDate(opdQueue.getAppointment().getAppointmentDate());
+        response.setAppointmentId(opdQueue.getAppointment().getId());
         response.setCreatedAt(opdQueue.getCreatedAt());
         response.setUpdatedAt(opdQueue.getUpdatedAt());
 
         return response;
     }
+
+
 }

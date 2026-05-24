@@ -33,7 +33,7 @@ public class PatientController {
     }
 
     @GetMapping("/admin/patients")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     public ResponseEntity<ApiResponse> getAllPatients() {
         List<PatientProfileResponseDto> patientProfile = patientService.getAllPatients();
 

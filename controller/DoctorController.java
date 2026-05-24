@@ -34,7 +34,7 @@ public class DoctorController {
     }
 
     @GetMapping("/admin/doctors")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST', 'PATIENT')")
     public ResponseEntity<ApiResponse> getAllDoctors() {
         List<DoctorProfileResponseDto> doctorProfile = doctorService.getALlDoctors();
 

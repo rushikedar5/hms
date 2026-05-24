@@ -38,9 +38,9 @@ public class OpdQueueController {
     }
 
     @PutMapping("/queue/{id}/status")
-    @PreAuthorize("hasRole('RECEPTIONIST')")
+    @PreAuthorize("hasAnyRole('RECEPTIONIST', 'DOCTOR')")
     public ResponseEntity<ApiResponse> updateStatus(@PathVariable UUID id, @RequestBody @Valid UpdateQueueStatusDto dto){
-        OpdQueue opdQueue = updateQueueStatusService.updateStatus(id, dto);
+        OpdQueueResponseDto opdQueue = updateQueueStatusService.updateStatus(id, dto);
 
         return ResponseEntity
                 .status(201)
@@ -50,7 +50,7 @@ public class OpdQueueController {
                         .build());
     }
 
-    @GetMapping("doctors/queue")
+    @GetMapping("/doctors/queue")
     @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse> getQueue() {
         List<OpdQueueResponseDto> opdQueue = opdQueueService.getQueue();
@@ -60,6 +60,29 @@ public class OpdQueueController {
                 .body(ApiResponse.builder()
                         .data(opdQueue)
                         .message("Queues fetched successfully!!")
+                        .build());
+    }
+
+    @GetMapping("/queue")
+    @PreAuthorize("hasAnyRole('RECEPTIONIST', 'ADMIN')")
+    public ResponseEntity<ApiResponse> getAllQueue() {
+        List<OpdQueueResponseDto> queue = opdQueueService.getAllQueue();
+
+        return ResponseEntity.status(200)
+                .body(ApiResponse.builder()
+                        .data(queue)
+                        .message("Queue fetched successfully")
+                        .build());
+    }
+
+    @GetMapping("/patients/queue")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<ApiResponse> getPatientQueue() {
+        OpdQueueResponseDto queue = opdQueueService.getPatientQueue();
+        return ResponseEntity.status(200)
+                .body(ApiResponse.builder()
+                        .data(queue)
+                        .message("Queue fetched")
                         .build());
     }
 }

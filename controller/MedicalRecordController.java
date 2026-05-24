@@ -21,7 +21,7 @@ public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
 
-    @PostMapping("/medical-record")
+    @PostMapping("/medical-records")
     @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<ApiResponse> createMedicalRecord(@RequestBody @Valid MedicalRecordDto dto) {
         MedicalRecordResponseDto medicalRecord = medicalRecordService.addMedicalRecord(dto);

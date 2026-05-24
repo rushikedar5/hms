@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MedicalRecordResponseDto {
     private String patientName;
+    private UUID patientId;
     private String doctorName;
     private UUID appointmentId;
     private String height;

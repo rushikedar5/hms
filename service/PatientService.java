@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +53,7 @@ public class PatientService {
                 .toList();
     }
 
+
     public PatientProfileResponseDto mapToResponse(PatientProfile patientProfile) {
         PatientProfileResponseDto response = new PatientProfileResponseDto();
         response.setId(patientProfile.getId());
@@ -66,4 +68,6 @@ public class PatientService {
         return response;
 
     }
+
+
 }

@@ -69,7 +69,7 @@ public class DoctorService {
         response.setId(doctorProfile.getId());
         response.setEmail(doctorProfile.getUser().getEmail());
         response.setName(doctorProfile.getName());
-        response.setDepartment(doctorProfile.getName());
+        response.setDepartment(doctorProfile.getDepartment().getName());
         response.setDepartmentId(doctorProfile.getId());
         response.setPhone(doctorProfile.getPhone());
         response.setDegree(doctorProfile.getDegree());

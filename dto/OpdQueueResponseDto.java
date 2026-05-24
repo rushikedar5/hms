@@ -16,6 +16,8 @@ public class OpdQueueResponseDto {
     private UUID id;
     private String patientName;
     private String doctorName;
+    private UUID patientId;
+    private UUID appointmentId;
     private String tokenNo;
     private QueueStatus queueStatus;
     private LocalDate appointmentDate;

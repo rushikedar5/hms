@@ -89,6 +89,7 @@ public class MedicalRecordService {
     private MedicalRecordResponseDto mapToResponse(MedicalRecord medicalRecord) {
         MedicalRecordResponseDto response = new MedicalRecordResponseDto();
         response.setPatientName(medicalRecord.getPatientProfile().getName());
+        response.setPatientId(medicalRecord.getPatientProfile().getId());
         response.setDoctorName(medicalRecord.getDoctorProfile().getName());
         response.setAppointmentId(medicalRecord.getAppointment().getId());
         response.setHeight(medicalRecord.getHeight());

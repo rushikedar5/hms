@@ -95,10 +95,20 @@ public class AppointmentService {
                 .toList();
     }
 
+    public List<AppointmentResponseDto> getAppointmentsByPatientId(UUID patientId) {
+        PatientProfile patient = patientProfileRepository.findById(patientId)
+                .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
+        return appointmentRepository.findByPatientProfile(patient)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     private AppointmentResponseDto mapToResponse(Appointment appointment) {
         AppointmentResponseDto response = new AppointmentResponseDto();
         response.setId(appointment.getId());
         response.setDoctorName(appointment.getDoctorProfile().getName());
+        response.setDoctorId(appointment.getDoctorProfile().getId());
         response.setPatientName(appointment.getPatientProfile().getName());
         response.setDepartment(appointment.getDoctorProfile().getDepartment().getName());
         response.setAppointmentDate(appointment.getAppointmentDate());
